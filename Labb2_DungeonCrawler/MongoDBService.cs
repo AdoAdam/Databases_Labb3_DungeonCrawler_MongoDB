@@ -1,4 +1,6 @@
-﻿using Labb2_DungeonCrawler.Models;
+﻿using Labb2_DungeonCrawler.Elements;
+using Labb2_DungeonCrawler.Models;
+using Labb2_DungeonCrawler.States;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -58,6 +60,45 @@ namespace Labb2_DungeonCrawler
                 };
 
                 PlayerClasses.InsertMany(defaults);
+            }
+        }
+
+        public void SaveGame(Player player, int turns)
+        {
+            var enemies = LevelData.Elements.OfType<Enemy>().Select(e => new EnemyState 
+            { 
+                Type = e.GetType().Name,
+                Position = new Position(e.Position.X, e.Position.Y ),
+                Health = e.Health
+            }).ToList();
+
+            var walls = LevelData.Elements.OfType<Wall>().Select(w => new WallState { 
+                Position = new Position(w.Position.X, w.Position.Y ),
+                Discovered = w.isDiscovered
+            }).ToList();
+
+            var save = new SavedGameModel
+            {
+                PlayerName = player.Name,
+                PlayerClass = "Unknown",
+                Health = player.Health,
+                Position = new Position(player.Position.X, player.Position.Y),
+                Turns = turns,
+                IsAlive = player.isAlive,
+                Enemies = enemies,
+                Walls = walls
+            };
+
+            var filter = Builders<SavedGameModel>.Filter.Eq(s => s.PlayerName, player.Name);
+            var existing =  SavedGames.Find(filter).FirstOrDefault();
+
+            if (existing == null)
+            {
+                SavedGames.InsertOne(save);
+            }
+            else
+            {
+                SavedGames.ReplaceOne(filter, save);
             }
         }
     }

@@ -5,11 +5,19 @@ class GameLoop
 {
     public static Action? NewTurn;
     public static int turns = 0;
+    private static MongoDBService _db;
     public static void Play()
     {
+        _db = new MongoDBService();
+
         while (LevelData.player.isAlive)
         {
             var key = Console.ReadKey();
+
+            if (key.Key == ConsoleKey.F5)
+            {
+                _db.SaveGame(LevelData.player, turns);
+            }
 
             LevelData.player.Move(key);
             Console.SetCursorPosition(0, LevelData.mapHeight);
