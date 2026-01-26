@@ -6,6 +6,8 @@ StartGame();
 
 static void StartGame()
 {
+    var db = new MongoDBService();
+
     Console.CursorVisible = false;
     LevelData.Load("Levels/Level1.txt");
     GameLoop.NewTurn += GameLoop.AddTurn;
