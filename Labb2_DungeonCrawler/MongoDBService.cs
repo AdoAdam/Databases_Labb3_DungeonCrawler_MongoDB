@@ -98,7 +98,74 @@ namespace Labb2_DungeonCrawler
             }
             else
             {
+                save.Id = existing.Id;
                 SavedGames.ReplaceOne(filter, save);
+            }
+        }
+
+        public List<SavedGameModel> GetAllSavedGames()
+        {
+            return SavedGames.Find(_ => true).ToList();
+        }
+
+        public SavedGameModel LoadGame(string playerName)
+        {
+            var filter = Builders<SavedGameModel>.Filter.Eq(s => s.PlayerName, playerName);
+            return SavedGames.Find(filter).FirstOrDefault();
+        }
+
+        public void LoadSavedGame(SavedGameModel save)
+        {
+            LevelData.Elements.Clear();
+
+            Player player = new Player(save.Position.X, save.Position.Y);
+            player.Name = save.PlayerName;
+            player.Health = save.Health;
+            LevelData.player = player;
+            LevelData.Elements.Add(player);
+
+            LoadEnemies(save);
+            LoadWalls(save);
+
+            GameLoop.turns = save.Turns;
+        }
+
+        private void LoadEnemies(SavedGameModel save)
+        {
+            foreach (var e in save.Enemies)
+            {
+                Enemy enemy;
+
+                if (e.Type == "Rat")
+                {
+                    enemy = new Rat();
+                }
+                else if (e.Type == "Snake")
+                {
+                    enemy = new Snake();
+                }
+                else
+                {
+                    enemy = null;
+                }
+
+                if (enemy != null)
+                {
+                    enemy.Position = new Position(e.Position.X, e.Position.Y);
+                    enemy.Health = e.Health;
+                    LevelData.Elements.Add(enemy);
+                }
+            }
+        }
+
+        private void LoadWalls(SavedGameModel save)
+        {
+            foreach (var w in save.Walls)
+            {
+                Wall wall = new Wall();
+                wall.Position = new Position(w.Position.X, w.Position.Y);
+                wall.isDiscovered = w.Discovered;
+                LevelData.Elements.Add(wall);
             }
         }
     }
