@@ -23,7 +23,7 @@ class GameLoop
             Console.SetCursorPosition(0, LevelData.mapHeight);
             Console.ResetColor();
             Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
-            Console.WriteLine($"Name: {LevelData.player.Name} - Health: {LevelData.player.Health}/100 - Turn: {turns}");
+            Console.WriteLine($"Name: {LevelData.player.Name} the {LevelData.player.Class} - Health: {LevelData.player.Health}/100 - Turn: {turns}");
         }
 
         GameOver();

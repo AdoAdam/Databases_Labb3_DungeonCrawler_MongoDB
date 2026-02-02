@@ -3,10 +3,12 @@ using Labb2_DungeonCrawler;
 using Labb2_DungeonCrawler.Elements;
 using System.Runtime.CompilerServices;
 
-Menu();
-StartGame();
+bool isNewGame = false;
 
-static void Menu()
+Menu(ref isNewGame);
+StartGame(isNewGame);
+
+static void Menu(ref bool IsNewGame)
 {
     bool inMenu = true;
     MongoDBService _db = new();
@@ -25,8 +27,10 @@ static void Menu()
 
             if (savedGames.Count == 0)
             {
-                Console.WriteLine("No saved games found");
-                return;
+                Console.Clear();
+                Console.WriteLine("No saved games found, press any button to return");
+                Console.ReadKey();
+                continue;
             }
 
             while (true)
@@ -61,23 +65,75 @@ static void Menu()
                     continue;
                 }
 
-
-                Console.Clear();
-
                 var selectedSave = savedGames[choice - 1];
+
                 _db.LoadSavedGame(selectedSave);
+
+                IsNewGame = false;
+                inMenu = false;
+                return;
+            }
+        }
+        else if (key.Key == ConsoleKey.D1)
+        {
+            var classes = _db.GetAllPlayerClasses();
+
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("Choose your class: (or go back with ESC)");
+
+                for (int i = 0; i < classes.Count; i++)
+                {
+                    Console.WriteLine($"{i + 1}. {classes[i].Name}");
+                }
+
+                Console.WriteLine("Enter number");
+
+                ConsoleKeyInfo choiceKey = Console.ReadKey(true);
+
+                if (choiceKey.Key == ConsoleKey.Escape) { break; }
+
+                if (!char.IsDigit(choiceKey.KeyChar))
+                {
+                    Console.WriteLine("Invalid input. Press any key to try again");
+                    Console.ReadKey(true);
+                    continue;
+                }
+
+                int choice = int.Parse(choiceKey.KeyChar.ToString());
+
+                if (choice < 1 || choice > classes.Count)
+                {
+                    Console.WriteLine("Invalid choice. Press any key to try again");
+                    Console.ReadKey(true);
+                    continue;
+                }
+
+                var chosenClass = classes[choice - 1];
+
+                Console.Write("Enter character name: ");
+                string playerName = Console.ReadLine();
+
+                LevelData.Elements.Clear();
+                LevelData.LoadMap("Levels/Level1.txt");
+                Console.WriteLine();
+
+                _db.CreateNewGame(LevelData.player, playerName, chosenClass.Name);
+
+                IsNewGame = true;
                 inMenu = false;
                 return;
             }
         }
     }
-    StartGame();
 }
 
-static void StartGame()
+static void StartGame(bool IsNewGame)
 {
+    Console.Clear();
     Console.CursorVisible = false;
-    //LevelData.Load("Levels/Level1.txt");
+
     GameLoop.NewTurn += GameLoop.AddTurn;
     foreach (LevelElement element in LevelData.Elements)
     {

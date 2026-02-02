@@ -56,7 +56,8 @@ namespace Labb2_DungeonCrawler
                 {
                     new() { Name = "Warrior"},
                     new() { Name = "Wizard"},
-                    new() { Name = "Thief"}
+                    new() { Name = "Thief"},
+                    new() { Name = "Priest"}
                 };
 
                 PlayerClasses.InsertMany(defaults);
@@ -80,7 +81,7 @@ namespace Labb2_DungeonCrawler
             var save = new SavedGameModel
             {
                 PlayerName = player.Name,
-                PlayerClass = "Unknown",
+                PlayerClass = player.Class,
                 Health = player.Health,
                 Position = new Position(player.Position.X, player.Position.Y),
                 Turns = turns,
@@ -116,13 +117,20 @@ namespace Labb2_DungeonCrawler
 
         public void LoadSavedGame(SavedGameModel save)
         {
-            LevelData.Elements.Clear();
 
-            Player player = new Player(save.Position.X, save.Position.Y);
+            var player = LevelData.Elements.OfType<Player>().FirstOrDefault();
+
+            if (player == null)
+            {
+                player = new Player(save.Position.X, save.Position.Y);
+                LevelData.Elements.Add(player);
+            }
+
             player.Name = save.PlayerName;
             player.Health = save.Health;
+            player.Class = save.PlayerClass;
+
             LevelData.player = player;
-            LevelData.Elements.Add(player);
 
             LoadEnemies(save);
             LoadWalls(save);
@@ -167,6 +175,31 @@ namespace Labb2_DungeonCrawler
                 wall.isDiscovered = w.Discovered;
                 LevelData.Elements.Add(wall);
             }
+        }
+
+        public List<PlayerClassModel> GetAllPlayerClasses()
+        {
+            return PlayerClasses.Find(_ => true).ToList();
+        }
+
+        public void CreateNewGame(Player player, string playerName, string playerClass)
+        {
+            player.Name = playerName;
+            player.Class = playerClass;
+
+            var save = new SavedGameModel
+            {
+                PlayerName = playerName,
+                PlayerClass = playerClass,
+                Health = 100,
+                Position = new Position(player.Position.X, player.Position.Y),
+                Turns = 0,
+                IsAlive = true,
+                Enemies = new List<EnemyState>(),
+                Walls = new List<WallState>()
+            };
+
+            SavedGames.InsertOne(save);
         }
     }
 }

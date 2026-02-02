@@ -7,6 +7,7 @@ namespace Labb2_DungeonCrawler;
 class Player : LevelElement
 {
     public string Name { get; set; }
+    public string Class {  get; set; }
     public int Health { get; set; }
     public Dice AttackDice { get; set; }
     public Dice DefenceDice { get; set; }

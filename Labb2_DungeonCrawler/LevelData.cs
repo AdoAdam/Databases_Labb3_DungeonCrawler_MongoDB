@@ -10,13 +10,13 @@ namespace Labb2_DungeonCrawler
         public static int mapHeight = 0;
 
         public static Player player;
-        public static void Load(string fileName)
+        public static void LoadMap(string fileName)
         {
             using (StreamReader reader = new StreamReader(fileName))
             {
                 map = reader.ReadToEnd();
 
-                int yPosition = 0;
+                int yPosition = 3;
                 int xPosition = 0;
 
                 for (int i = 0; i < map.Length; i++) 
