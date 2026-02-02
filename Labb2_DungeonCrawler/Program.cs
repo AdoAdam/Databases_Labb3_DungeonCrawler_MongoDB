@@ -1,11 +1,14 @@
 ﻿
 using Labb2_DungeonCrawler;
 using Labb2_DungeonCrawler.Elements;
-using System.Runtime.CompilerServices;
 
 bool isNewGame = false;
 
+
 Menu(ref isNewGame);
+
+AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
+
 StartGame(isNewGame);
 
 static void Menu(ref bool IsNewGame)
@@ -142,4 +145,10 @@ static void StartGame(bool IsNewGame)
     }
 
     GameLoop.Play();
+}
+
+static void OnProcessExit(object? sender, EventArgs e)
+{
+    MongoDBService _db = new();
+    _db.SaveGame(LevelData.player, GameLoop.turns);
 }
