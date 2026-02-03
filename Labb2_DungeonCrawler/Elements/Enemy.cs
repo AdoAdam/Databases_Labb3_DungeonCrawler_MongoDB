@@ -29,7 +29,7 @@ namespace Labb2_DungeonCrawler.Elements
 
         public void AttackOrFlee(int attackOrder)
         {
-            Console.SetCursorPosition(0, LevelData.mapHeight + attackOrder);
+            Console.SetCursorPosition(0, attackOrder);
             Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
 
             bool isFleeSuccessful = IsFleeSuccessful();
@@ -60,7 +60,7 @@ namespace Labb2_DungeonCrawler.Elements
 
         public virtual void Flee(int attackOrder)
         {
-            Console.SetCursorPosition(0, LevelData.mapHeight + attackOrder);
+            Console.SetCursorPosition(0, attackOrder);
             Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
             Console.ForegroundColor = Color;
             Console.Write($"The {Name} Fled");

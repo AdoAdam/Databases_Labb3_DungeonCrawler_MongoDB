@@ -154,6 +154,7 @@ static void StartGame(bool IsNewGame)
     Console.Clear();
     Console.CursorVisible = false;
 
+
     GameLoop.NewTurn += GameLoop.AddTurn;
     foreach (LevelElement element in LevelData.Elements)
     {

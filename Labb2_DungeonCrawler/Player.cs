@@ -29,6 +29,7 @@ class Player : LevelElement
     public void Move(ConsoleKeyInfo keyInfo)
     {
         Position nextPos = GetNextPosition(keyInfo.Key);
+        if (nextPos == null) return;
         
         var levelElement = LevelData.Elements.FirstOrDefault(e => e.Position.X == nextPos.X && e.Position.Y == nextPos.Y);
 
@@ -97,7 +98,15 @@ class Player : LevelElement
         {
             nextPos = new(Position.X, Position.Y + 1);
         }
-        return nextPos;
+        
+        if (nextPos.X == 0 && nextPos.Y == 0)
+        {
+            return null;
+        }
+        else
+        {
+            return nextPos;
+        }
     }
     public void Attack(Enemy enemy, int attackOrder)
     {
@@ -121,7 +130,7 @@ class Player : LevelElement
 
     private void ClearCombatText(int attackOrder)
     {
-        Console.SetCursorPosition(0, LevelData.mapHeight + attackOrder);
+        Console.SetCursorPosition(0, attackOrder);
         Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
     }
 
