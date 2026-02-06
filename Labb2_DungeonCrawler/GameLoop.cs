@@ -24,7 +24,8 @@ class GameLoop
             DrawHUD();
         }
 
-        GameOver();
+        GameOver(_db);
+        return;
     }
 
     private static void DrawHUD()
@@ -41,9 +42,13 @@ class GameLoop
         turns++;
     }
 
-    public static void GameOver()
+    public static void GameOver(MongoDBService db)
     {
         Console.Clear();
-        Console.WriteLine("You Lost");
+        Console.WriteLine("You Lost. Save deleted (Press any key to return to main menu)");
+
+        db.DeleteSave(LevelData.currentSaveId);
+        Console.ReadKey(true);
+
     }
 }

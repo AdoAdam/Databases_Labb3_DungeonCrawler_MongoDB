@@ -1,6 +1,7 @@
 ﻿using Labb2_DungeonCrawler.Elements;
 using Labb2_DungeonCrawler.Models;
 using Labb2_DungeonCrawler.States;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -131,6 +132,7 @@ namespace Labb2_DungeonCrawler
             player.Class = save.PlayerClass;
 
             LevelData.player = player;
+            LevelData.currentSaveId = save.Id;
 
             LoadEnemies(save);
             LoadWalls(save);
@@ -200,6 +202,21 @@ namespace Labb2_DungeonCrawler
             };
 
             SavedGames.InsertOne(save);
+            LevelData.currentSaveId = save.Id;
+        }
+
+        public void UpdatePlayerName(ObjectId id, string newName)
+        {
+            var filter = Builders<SavedGameModel>.Filter.Eq(s => s.Id, id);
+            var update = Builders<SavedGameModel>.Update.Set(s => s.PlayerName, newName);
+
+            SavedGames.UpdateOne(filter, update);
+        }
+
+        public void DeleteSave(ObjectId id)
+        {
+            var filter = Builders<SavedGameModel>.Filter.Eq(s => s.Id, id);
+            SavedGames.DeleteOne(filter);
         }
     }
 }

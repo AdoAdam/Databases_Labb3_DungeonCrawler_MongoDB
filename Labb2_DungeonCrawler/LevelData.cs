@@ -1,4 +1,5 @@
 ﻿using Labb2_DungeonCrawler.Elements;
+using MongoDB.Bson;
 
 namespace Labb2_DungeonCrawler
 {
@@ -10,6 +11,7 @@ namespace Labb2_DungeonCrawler
         public static int mapHeight = 0;
 
         public static Player player;
+        public static ObjectId currentSaveId;
         public static void LoadMap(string fileName)
         {
             using (StreamReader reader = new StreamReader(fileName))

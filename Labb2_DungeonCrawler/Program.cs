@@ -2,15 +2,19 @@
 using Labb2_DungeonCrawler;
 using Labb2_DungeonCrawler.Elements;
 using Labb2_DungeonCrawler.Models;
+using System.Transactions;
 using System.Xml.Linq;
 
 bool isNewGame = false;
 
-Menu(ref isNewGame);
+while (true)
+{
+    Menu(ref isNewGame);
 
-AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
+    AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
 
-StartGame(isNewGame);
+    StartGame(isNewGame);
+}
 
 static void Menu(ref bool IsNewGame)
 {
@@ -59,12 +63,87 @@ static void HandleLoadGame(MongoDBService db, ref bool IsNewGame, ref bool inMen
         if (choice == null) return;
 
         var selectedSave = savedGames[choice.Value];
-        db.LoadSavedGame(selectedSave);
 
-        IsNewGame = false;
-        inMenu = false;
-        return;
+        while (true)
+        {
+            int option = ShowSaveOptionsMenu();
+
+            if (option == 0) return;
+            if (option == -1) continue;
+
+            if (option == 1)
+            {
+                db.LoadSavedGame(selectedSave);
+
+                IsNewGame = false;
+                inMenu = false;
+                return;
+            }
+            else if (option == 2)
+            {
+                string oldName = selectedSave.PlayerName;
+
+                Console.Clear();
+                Console.WriteLine("Enter new player name (or go back with ESC)");
+
+                string? newName = GetPlayerName();
+                if (newName == null) continue;
+
+                if (!Confirm($"Are you sure you want to rename '{selectedSave.PlayerName}' to '{newName}'"))
+                    continue;
+
+                db.UpdatePlayerName(selectedSave.Id, newName);
+                selectedSave.PlayerName = newName;
+
+                Console.WriteLine("Name updated (Press any key to go back)");
+                Console.ReadKey(true);
+            }
+            else if (option == 3)
+            {
+                if (!Confirm($"Are you sure you want to delete save '{selectedSave.PlayerName} - {selectedSave.PlayerClass} (HP: {selectedSave.Health}, Turn: {selectedSave.Turns}'"))
+                    continue;
+
+                db.DeleteSave(selectedSave.Id);
+                savedGames.RemoveAt(choice.Value);
+
+                Console.WriteLine("Save deleted (Press any key to go back)");
+                Console.ReadKey(true);
+                return;
+            }
+        }
+
     }
+}
+
+static bool Confirm(string message)
+{
+    Console.WriteLine();
+    Console.WriteLine(message + "(y/n)");
+
+    while (true)
+    {
+        ConsoleKeyInfo key = Console.ReadKey(true);
+
+        if (key.Key == ConsoleKey.Y) return true;
+        if (key.Key == ConsoleKey.N) return false;
+
+        Console.WriteLine("Invalid input");
+    }
+}
+
+static int ShowSaveOptionsMenu()
+{
+    Console.Clear();
+    Console.WriteLine("1. Play");
+    Console.WriteLine("2. Edit player name");
+    Console.WriteLine("3. Delete save");
+
+    ConsoleKeyInfo key = Console.ReadKey();
+
+    if (key.Key == ConsoleKey.Escape) return 0;
+    if (!char.IsDigit(key.KeyChar)) return -1;
+
+    return int.Parse(key.KeyChar.ToString());
 }
 
 static int? ShowLoadGameMenu(List<SavedGameModel> savedGames)
@@ -137,22 +216,26 @@ static string? GetPlayerName()
     {
         key = Console.ReadKey(true);
 
-        if (key.Key == ConsoleKey.Escape) 
-        { 
-            return null; 
+        if (key.Key == ConsoleKey.Escape)
+        {
+            return null;
         }
-        else if (key.Key == ConsoleKey.Enter) 
-        { 
+        else if (key.Key == ConsoleKey.Enter)
+        {
             if (playerName.Length == 0)
             {
                 playerName = "Player";
             }
-            return playerName; 
+            return playerName;
         }
-        else 
+        if (key.Key == ConsoleKey.Backspace && playerName.Length > 0)
         { 
-            playerName += key.KeyChar; 
-            Console.Write(key.KeyChar);
+            playerName = playerName[..^1];
+            Console.Write("\b \b");
+        } 
+        else if (!char.IsControl(key.KeyChar))
+        {
+            playerName += key.KeyChar; Console.Write(key.KeyChar);
         }
     }
 }
