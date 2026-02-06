@@ -2,9 +2,9 @@
 using Labb2_DungeonCrawler;
 using Labb2_DungeonCrawler.Elements;
 using Labb2_DungeonCrawler.Models;
+using System.Xml.Linq;
 
 bool isNewGame = false;
-
 
 Menu(ref isNewGame);
 
@@ -109,9 +109,11 @@ static void HandleNewGame(MongoDBService _db, ref bool IsNewGame, ref bool inMen
         if (choice == null) { return; }
 
         var chosenClass = classes[choice.Value];
+        Console.WriteLine("Chosen class: " + chosenClass.Name);
 
-        Console.Write("Enter character name: ");
-        string playerName = Console.ReadLine();
+        string? playerName = GetPlayerName();
+
+        if (playerName == null) { return; }
 
         LevelData.Elements.Clear();
         LevelData.LoadMap("Levels/Level1.txt");
@@ -121,6 +123,37 @@ static void HandleNewGame(MongoDBService _db, ref bool IsNewGame, ref bool inMen
         IsNewGame = true;
         inMenu = false;
         return;
+    }
+}
+
+static string? GetPlayerName()
+{
+    Console.Write("Enter character name: ");
+
+    string playerName = "";
+    ConsoleKeyInfo key;
+
+    while (true)
+    {
+        key = Console.ReadKey(true);
+
+        if (key.Key == ConsoleKey.Escape) 
+        { 
+            return null; 
+        }
+        else if (key.Key == ConsoleKey.Enter) 
+        { 
+            if (playerName.Length == 0)
+            {
+                playerName = "Player";
+            }
+            return playerName; 
+        }
+        else 
+        { 
+            playerName += key.KeyChar; 
+            Console.Write(key.KeyChar);
+        }
     }
 }
 
@@ -153,7 +186,6 @@ static void StartGame(bool IsNewGame)
 {
     Console.Clear();
     Console.CursorVisible = false;
-
 
     GameLoop.NewTurn += GameLoop.AddTurn;
     foreach (LevelElement element in LevelData.Elements)
