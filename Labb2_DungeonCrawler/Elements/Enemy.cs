@@ -1,4 +1,5 @@
 ﻿
+using Labb2_DungeonCrawler.Helpers;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Labb2_DungeonCrawler.Elements
@@ -68,7 +69,21 @@ namespace Labb2_DungeonCrawler.Elements
 
         public void CombatText(int attack, int defence)
         {
+            string combatMessage = $"The {Name} attacked you (ATK {attack}, DEF {defence})";
+
             int damage = attack - defence;
+
+            if (damage > 0)
+            {
+                combatMessage += ", wounding you";
+            }
+            else if (damage <= 0)
+            {
+                combatMessage += ", but did not manage to make any damage";
+            }
+
+            Log.Add(combatMessage);
+
             Console.ForegroundColor = Color;
             Console.Write($"The {Name} (ATK: {AttackDice.ToString()} => {attack})");
             Console.ResetColor();
@@ -102,6 +117,7 @@ namespace Labb2_DungeonCrawler.Elements
                 Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
             }
 
+            GameLoop.DrawAll -= Draw;
             GameLoop.NewTurn -= Draw;
             LevelData.Elements.Remove(this);
             GameLoop.NewTurn.Invoke();

@@ -1,4 +1,5 @@
 ﻿using Labb2_DungeonCrawler.Elements;
+using Labb2_DungeonCrawler.Helpers;
 using System;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -44,6 +45,11 @@ class Player : LevelElement
                 StartNewAttackSequence(enemy);
                 return;
             }
+        }
+        else
+        {
+            ClearCombatText(1);
+            ClearCombatText(2);
         }
 
         ClearLastPosition();
@@ -136,6 +142,25 @@ class Player : LevelElement
 
     public void SetCombatText(Enemy enemy, int enemyAttackOrder, int attack, int defence)
     {
+        string combatMessage = $"You attacked {enemy.Name} (ATK {attack}, DEF {defence})";
+        
+        int damage = attack - defence;
+
+        if (enemy.Health - damage <= 0) 
+        {
+            combatMessage += ", killing it"; enemy.Kill(enemyAttackOrder);
+        } 
+        else if (damage > 0) 
+        {
+            combatMessage += $", wounding the {enemy.Name}";
+        } 
+        else 
+        {
+            combatMessage += ", but did not manage to make any damage";
+        }
+
+        Log.Add(combatMessage);
+
         Console.ForegroundColor = Color;
         Console.Write($"You (ATK: {AttackDice.ToString()} => {attack})");
         Console.ResetColor();
@@ -144,7 +169,6 @@ class Player : LevelElement
         Console.Write($"{enemy.Name} (DEF: {enemy.DefenceDice.ToString()} => {defence})");
         Console.ResetColor();
 
-        int damage = attack - defence;
         if (enemy.Health - damage <= 0)
         {
             Console.Write(", Killing it");
@@ -155,6 +179,7 @@ class Player : LevelElement
             Console.Write($", wounding the ");
             Console.ForegroundColor = enemy.Color;
             Console.Write(enemy.Name);
+            Console.ResetColor();
             enemy.Health -= damage;
         }
         else if (damage <= 0)

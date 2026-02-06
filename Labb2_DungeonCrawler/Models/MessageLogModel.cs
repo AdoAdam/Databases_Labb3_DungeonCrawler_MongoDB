@@ -12,7 +12,7 @@ namespace Labb2_DungeonCrawler.Models
     {
         [BsonId]
         public ObjectId Id { get; set; }
-        public string PlayerName { get; set; }
+        public ObjectId SaveId { get; set; }
         public List<string> Messages { get; set; }
     }
 }

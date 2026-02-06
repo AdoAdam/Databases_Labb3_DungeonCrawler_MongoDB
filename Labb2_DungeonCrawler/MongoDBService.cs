@@ -133,6 +133,7 @@ namespace Labb2_DungeonCrawler
 
             LevelData.player = player;
             LevelData.currentSaveId = save.Id;
+            LevelData.MessageLog = LoadMessageLog(save.Id);
 
             LoadEnemies(save);
             LoadWalls(save);
@@ -203,6 +204,7 @@ namespace Labb2_DungeonCrawler
 
             SavedGames.InsertOne(save);
             LevelData.currentSaveId = save.Id;
+            LevelData.MessageLog = new List<string>();   
         }
 
         public void UpdatePlayerName(ObjectId id, string newName)
@@ -217,6 +219,33 @@ namespace Labb2_DungeonCrawler
         {
             var filter = Builders<SavedGameModel>.Filter.Eq(s => s.Id, id);
             SavedGames.DeleteOne(filter);
+        }
+
+        public void AddMessage(ObjectId saveId, string message)
+        {
+            var filter = Builders<MessageLogModel>.Filter.Eq(m => m.SaveId, saveId);
+            var log = Messages.Find(filter).FirstOrDefault();
+
+            if (log == null)
+            {
+                log = new MessageLogModel
+                {
+                    SaveId = saveId,
+                    Messages = new()
+                };
+                Messages.InsertOne(log);
+            }
+
+            var update = Builders<MessageLogModel>.Update.Push(m => m.Messages, message);
+            Messages.UpdateOne(filter, update);
+        }
+
+        public List<string> LoadMessageLog(ObjectId saveId)
+        {
+            var filter = Builders<MessageLogModel>.Filter.Eq(m => m.SaveId, saveId);
+            var log = Messages.Find(filter).FirstOrDefault();
+
+            return log.Messages ?? new List<string>();
         }
     }
 }

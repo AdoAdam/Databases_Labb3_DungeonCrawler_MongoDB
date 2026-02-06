@@ -7,6 +7,10 @@ namespace Labb2_DungeonCrawler
     {
         public static List<LevelElement> Elements { get { return _elements; } }
         private static List<LevelElement> _elements = new();
+
+        public static List<string> MessageLog = new();
+        public static int CurrentSaveLogIndex = 0;
+
         private static string map;
         public static int mapHeight = 0;
 
