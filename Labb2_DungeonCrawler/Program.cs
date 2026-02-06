@@ -74,7 +74,7 @@ static int? ShowLoadGameMenu(List<SavedGameModel> savedGames)
 
     for (int i = 0; i < savedGames.Count; i++)
     {
-        Console.WriteLine($"{i + 1}. {savedGames[i].PlayerName} (HP: {savedGames[i].Health}, Turn: {savedGames[i].Turns})");
+        Console.WriteLine($"{i + 1}. {savedGames[i].PlayerName} - {savedGames[i].PlayerClass} (HP: {savedGames[i].Health}, Turn: {savedGames[i].Turns})");
     }
 
     Console.WriteLine("Enter number to play: (or go back with ESC) ");
