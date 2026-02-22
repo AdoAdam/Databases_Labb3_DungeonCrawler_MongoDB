@@ -1,6 +1,5 @@
 ﻿
 using Labb2_DungeonCrawler.Helpers;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Labb2_DungeonCrawler.Elements
 {

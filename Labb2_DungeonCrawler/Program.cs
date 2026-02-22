@@ -1,9 +1,6 @@
 ﻿
 using Labb2_DungeonCrawler;
-using Labb2_DungeonCrawler.Elements;
 using Labb2_DungeonCrawler.Models;
-using System.Transactions;
-using System.Xml.Linq;
 
 bool isNewGame = false;
 
