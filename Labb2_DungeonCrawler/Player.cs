@@ -124,7 +124,6 @@ class Player : LevelElement
         int defence = enemy.DefenceDice.Throw();
 
         ClearCombatText(attackOrder);
-        Console.SetCursorPosition(0, attackOrder);
         SetCombatText(enemy, enemyAttackOrder, attackOrder, attack, defence);
     }
 
@@ -136,7 +135,6 @@ class Player : LevelElement
 
     public void SetCombatText(Enemy enemy, int enemyAttackOrder, int attackOrder, int attack, int defence)
     {
-        Console.SetCursorPosition(0, attackOrder);
         string combatMessage = $"You attacked {enemy.Name} (ATK {attack}, DEF {defence})";
         
         int damage = attack - defence;
@@ -155,7 +153,7 @@ class Player : LevelElement
         }
 
         Log.Add(combatMessage);
-
+        Console.SetCursorPosition(0, attackOrder);
         Console.ForegroundColor = Color;
         Console.Write($"You (ATK: {AttackDice.ToString()} => {attack})");
         Console.ResetColor();

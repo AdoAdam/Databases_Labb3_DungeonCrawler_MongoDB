@@ -44,7 +44,7 @@ namespace Labb2_DungeonCrawler.Elements
                 int attack = AttackDice.Throw();
                 int defence = LevelData.player.DefenceDice.Throw();
 
-                CombatText(attack, defence);
+                CombatText(attackOrder, attack, defence);
             }
 
             InCombat = false;
@@ -66,7 +66,7 @@ namespace Labb2_DungeonCrawler.Elements
             Console.Write($"The {Name} Fled");
         }
 
-        public void CombatText(int attack, int defence)
+        public void CombatText(int attackOrder, int attack, int defence)
         {
             string combatMessage = $"The {Name} attacked you (ATK {attack}, DEF {defence})";
 
@@ -83,6 +83,7 @@ namespace Labb2_DungeonCrawler.Elements
 
             Log.Add(combatMessage);
 
+            Console.SetCursorPosition(0, attackOrder);
             Console.ForegroundColor = Color;
             Console.Write($"The {Name} (ATK: {AttackDice.ToString()} => {attack})");
             Console.ResetColor();
