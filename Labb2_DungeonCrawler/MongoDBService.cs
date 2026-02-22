@@ -18,7 +18,7 @@ namespace Labb2_DungeonCrawler
         {
             var client = new MongoClient("mongodb://localhost:27017");
 
-            _db = client.GetDatabase("DungeonCrawler");
+            _db = client.GetDatabase("AdamAdolfsson");
 
             CreateCollectionsIfMissing();
             SeedPlayerClasses();
