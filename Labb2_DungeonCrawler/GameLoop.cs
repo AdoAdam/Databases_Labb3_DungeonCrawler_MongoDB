@@ -9,6 +9,7 @@ class GameLoop
     public static Action? DrawAll;
     public static int turns = 0;
     private static MongoDBService _db;
+
     public static void Play()
     {
 
@@ -18,7 +19,6 @@ class GameLoop
         foreach (LevelElement element in LevelData.Elements)
         {
             DrawAll += element.Draw;
-            NewTurn += element.Draw;
             element.Draw();
         }
 
@@ -56,7 +56,7 @@ class GameLoop
         Console.ResetColor();
         Console.SetCursorPosition(0, 0);
         Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
-        Console.WriteLine($"Name: {LevelData.player.Name} the {LevelData.player.Class} - Health: {LevelData.player.Health}/100 - Turn: {turns}");
+        Console.WriteLine($"Name: {LevelData.player.Name} the {LevelData.player.Class} - Health: {LevelData.player.Health}/100 - Turn: {turns} (F1 - logs, F5 - Save)");
         Console.SetCursorPosition(0, LevelData.mapHeight);
     }
 
@@ -67,7 +67,8 @@ class GameLoop
 
     public static void Draw()
     {
-        DrawAll.Invoke();
+        DrawAll?.Invoke();
+        Console.SetCursorPosition(0, LevelData.mapHeight + 2);
     }
 
     public static void ShowMessageLog()

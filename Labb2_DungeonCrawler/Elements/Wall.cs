@@ -15,6 +15,7 @@ namespace Labb2_DungeonCrawler.Elements
         {
             if (LevelData.player.Position.Distance(Position) < LevelData.player.VisionRange)
                 isDiscovered = true;
+
             if (isDiscovered && LevelData.player.Position.Distance(Position) > LevelData.player.VisionRange)
             {
                 Console.SetCursorPosition(Position.X, Position.Y);

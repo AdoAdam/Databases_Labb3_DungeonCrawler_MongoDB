@@ -120,7 +120,7 @@ namespace Labb2_DungeonCrawler.Elements
             GameLoop.DrawAll -= Draw;
             GameLoop.NewTurn -= Draw;
             LevelData.Elements.Remove(this);
-            GameLoop.NewTurn.Invoke();
+            //GameLoop.NewTurn.Invoke();
         }
     }
 }

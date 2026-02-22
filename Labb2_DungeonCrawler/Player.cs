@@ -1,7 +1,5 @@
 ﻿using Labb2_DungeonCrawler.Elements;
 using Labb2_DungeonCrawler.Helpers;
-using System;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Labb2_DungeonCrawler;
 
@@ -63,15 +61,10 @@ class Player : LevelElement
         Attack(enemy, 1);
         if (EnemyStillAlive(enemy))
         {
-            GameLoop.NewTurn.Invoke();
             enemy.AttackOrFlee(2);
-            return;
         }
-        else
-        {
-            GameLoop.NewTurn.Invoke();
-            return;
-        }
+
+        GameLoop.NewTurn?.Invoke();
     }
 
     private bool EnemyStillAlive(Enemy enemy)
@@ -131,17 +124,19 @@ class Player : LevelElement
         int defence = enemy.DefenceDice.Throw();
 
         ClearCombatText(attackOrder);
-        SetCombatText(enemy, enemyAttackOrder, attack, defence);
+        Console.SetCursorPosition(0, attackOrder);
+        SetCombatText(enemy, enemyAttackOrder, attackOrder, attack, defence);
     }
 
     private void ClearCombatText(int attackOrder)
     {
         Console.SetCursorPosition(0, attackOrder);
-        Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
+        Console.Write(new string(' ', Console.WindowWidth));
     }
 
-    public void SetCombatText(Enemy enemy, int enemyAttackOrder, int attack, int defence)
+    public void SetCombatText(Enemy enemy, int enemyAttackOrder, int attackOrder, int attack, int defence)
     {
+        Console.SetCursorPosition(0, attackOrder);
         string combatMessage = $"You attacked {enemy.Name} (ATK {attack}, DEF {defence})";
         
         int damage = attack - defence;

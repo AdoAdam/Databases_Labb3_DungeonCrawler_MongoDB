@@ -245,7 +245,12 @@ namespace Labb2_DungeonCrawler
             var filter = Builders<MessageLogModel>.Filter.Eq(m => m.SaveId, saveId);
             var log = Messages.Find(filter).FirstOrDefault();
 
-            return log.Messages ?? new List<string>();
+            if (log == null || log.Messages == null)
+            {
+                return new List<string>();
+            }
+
+            return log.Messages;
         }
     }
 }

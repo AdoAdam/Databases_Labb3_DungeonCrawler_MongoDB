@@ -12,7 +12,7 @@ namespace Labb2_DungeonCrawler
         public static int CurrentSaveLogIndex = 0;
 
         private static string map;
-        public static int mapHeight = 0;
+        public static int mapHeight;
 
         public static Player player;
         public static ObjectId currentSaveId;
